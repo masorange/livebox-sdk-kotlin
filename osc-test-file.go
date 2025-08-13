@@ -42,7 +42,7 @@ func vulnerableSQLHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Executing vulnerable query: %s", query)
 	fmt.Fprintf(w, "Query that would be run: %s\n", query)
 }
-
+//test comment
 // xssHandler reflects user input directly into the HTML response.
 func xssHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
