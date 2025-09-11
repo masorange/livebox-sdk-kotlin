@@ -13,6 +13,7 @@ func main() {
 	// Vulnerability: Logging Sensitive Data
 	// The hardcoded password is being written to application logs.
 
+	dbPassword := "SuperSecretPassword123"
 	log.Printf("SECURITY RISK: The hardcoded database password is: %s", dbPassword)
 
 	http.HandleFunc("/exec", vulnerableExecHandler)
