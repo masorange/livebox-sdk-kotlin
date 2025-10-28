@@ -74,10 +74,10 @@ object NetworkDIModule : BaseDIModule() {
 
         bind<Moshi>() with singleton {
             Moshi.Builder()
+                .add(ShortAccessPointAdapter())
                 .add(KotlinJsonAdapterFactory())
                 .add(FeatureIdAdapter())
                 .add(AccessPointBandwidthConfAdapter())
-                .add(ShortAccessPointAdapter())
                 .add(BigDecimal::class.java, MoshiBigDecimalAdapter())
                 .build()
         }
