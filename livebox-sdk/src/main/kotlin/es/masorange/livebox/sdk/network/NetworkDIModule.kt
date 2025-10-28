@@ -5,6 +5,7 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import es.masorange.livebox.sdk.di.BaseDIModule
+import es.masorange.livebox.sdk.network.adapters.AccessPointBandwidthConfAdapter
 import es.masorange.livebox.sdk.network.adapters.FeatureIdAdapter
 import es.masorange.livebox.sdk.network.adapters.MoshiBigDecimalAdapter
 import es.masorange.livebox.sdk.network.adapters.ShortAccessPointAdapter
@@ -75,6 +76,7 @@ object NetworkDIModule : BaseDIModule() {
             Moshi.Builder()
                 .add(KotlinJsonAdapterFactory())
                 .add(FeatureIdAdapter())
+                .add(AccessPointBandwidthConfAdapter())
                 .add(ShortAccessPointAdapter())
                 .add(BigDecimal::class.java, MoshiBigDecimalAdapter())
                 .build()
