@@ -49,8 +49,16 @@ data class AccessPoint(
     enum class BandwidthConf(val value: String) {
         @Json(name = "Auto") AUTO("Auto"),
         @Json(name = "20MHz") _20MHZ("20MHz"),
-        @Json(name = "20/40MHz") _20_40MHZ("20/40MHz"),
+        @Json(name = "40MHz") _40MHZ("40MHz"),
         @Json(name = "80MHz") _80MHZ("80MHz"),
-        @Json(name = "160MHz") _160MHZ("160MHz")
+        @Json(name = "160MHz") _160MHZ("160MHz"),
+        @Json(name = "20/40MHz") _20_40MHZ("20/40MHz"),
+        @Json(name = "80/40/20MHz") _80_40_20MHZ("80/40/20MHz"),
+        UNKNOWN("Unknown");
+
+        companion object {
+            fun fromValue(value: String?): BandwidthConf =
+                entries.find { it.value == value } ?: UNKNOWN
+        }
     }
 }
