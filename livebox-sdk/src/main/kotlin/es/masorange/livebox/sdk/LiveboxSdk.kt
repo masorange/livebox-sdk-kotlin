@@ -2,16 +2,18 @@ package es.masorange.livebox.sdk
 
 import android.content.Context
 import es.masorange.livebox.sdk.business.WeekDayHour
-import es.masorange.livebox.sdk.business.toDeviceSchedule
+import es.masorange.livebox.sdk.business.toSchedule
+import es.masorange.livebox.sdk.business.toWeekDayHour
 import es.masorange.livebox.sdk.di.LibDI
 import es.masorange.livebox.sdk.domain.livebox.models.BlockedDeviceAddRule
 import es.masorange.livebox.sdk.domain.livebox.models.BlockedDeviceUpdateRule
 import es.masorange.livebox.sdk.domain.livebox.models.Capabilities
-import es.masorange.livebox.sdk.domain.livebox.models.DeviceSchedule
+import es.masorange.livebox.sdk.domain.livebox.models.Schedule
 import es.masorange.livebox.sdk.domain.livebox.models.Feature.Id.*
 import es.masorange.livebox.sdk.domain.livebox.models.AccessPoint
 import es.masorange.livebox.sdk.domain.livebox.models.BlockedDevice
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceAlias
+import es.masorange.livebox.sdk.domain.livebox.models.Enabled
 import es.masorange.livebox.sdk.network.Environment
 import es.masorange.livebox.sdk.network.apis.ApiProvider
 import es.masorange.livebox.sdk.network.apis.livebox.LiveboxApi
@@ -232,7 +234,7 @@ class LiveboxSdk internal constructor(
      * @return The updated list of schedules.
      */
     suspend fun setDeviceSchedules(mac: String,
-                                   schedules: List<WeekDayHour>): List<DeviceSchedule> {
+                                   schedules: List<WeekDayHour>): List<Schedule> {
         val deviceSchedules = getBlockedDevices().find { it.mac == mac }
 
         // Check before posting a device to the devices blocked list, as duplicates will be created
@@ -257,7 +259,7 @@ class LiveboxSdk internal constructor(
         // Post the device's schedules
         return postDeviceSchedules(
             mac = mac.toUriMac(),
-            deviceScheduleList = schedules.map { it.toDeviceSchedule() }
+            scheduleList = schedules.map { it.toSchedule() }
         )
     }
 
@@ -274,9 +276,94 @@ class LiveboxSdk internal constructor(
     )
 
     private suspend fun postDeviceSchedules(mac: String,
-                                            deviceScheduleList: List<DeviceSchedule>) = liveboxApi.postDevicesMacSchedules(
+                                            scheduleList: List<Schedule>) = liveboxApi.postDevicesMacSchedules(
         uri = capabilities.featuresMap[PC_DEVICES_MAC_SCHEDULES]!!.uri
             .addParams(mapOf(URI_MAC to mac.toUriMac())),
-        deviceScheduleList = deviceScheduleList
+        scheduleList = scheduleList
+    )
+
+    /**
+     * Gets schedules for a specific WLAN network.
+     *
+     * @param wlanIfc The WLAN interface identifier.
+     * @param wlanAp The access point identifier.
+     * @return The list of schedules for the network.
+     */
+    suspend fun getWlanSchedule(wlanIfc: String,
+                                wlanAp: String) = liveboxApi.getWlanSchedule(
+        uri = capabilities.featuresMap[WLAN_SCHEDULE]!!.uri
+            .addParams(mapOf(
+                URI_WLAN_IFC to wlanIfc,
+                URI_WLAN_AP to wlanAp))
+    ).map { it.toWeekDayHour() }
+
+    /**
+     * Sets up a new list of schedules for a specific WLAN network.
+     * If schedules already exist, they will be combined with the new ones.
+     *
+     * @param wlanIfc The WLAN interface identifier.
+     * @param wlanAp The access point identifier.
+     * @param scheduleList The list of schedules to configure.
+     * @return The complete list of schedules for the network.
+     */
+    suspend fun postWlanSchedule(wlanIfc: String,
+                                 wlanAp: String,
+                                 scheduleList: List<WeekDayHour>) = liveboxApi.postWlanSchedule(
+        uri = capabilities.featuresMap[WLAN_SCHEDULE]!!.uri
+            .addParams(mapOf(
+                URI_WLAN_IFC to wlanIfc,
+                URI_WLAN_AP to wlanAp)),
+        scheduleList = scheduleList.map { it.toSchedule() }
+    ).map { it.toWeekDayHour() }
+
+    /**
+     * Deletes schedules for a specific WLAN network.
+     *
+     * @param wlanIfc The WLAN interface identifier.
+     * @param wlanAp The access point identifier.
+     * @param scheduleList The list of schedules to delete.
+     * @return The resulting list of schedules for the network.
+     */
+    suspend fun deleteWlanSchedule(wlanIfc: String,
+                                   wlanAp: String,
+                                   scheduleList: List<WeekDayHour>) = liveboxApi.deleteWlanSchedule(
+        uri = capabilities.featuresMap[WLAN_SCHEDULE]!!.uri
+            .addParams(mapOf(
+                URI_WLAN_IFC to wlanIfc,
+                URI_WLAN_AP to wlanAp)),
+        scheduleList = scheduleList.map { it.toSchedule() }
+    ).map { it.toWeekDayHour() }
+
+    /**
+     * Gets if schedules are enabled for a specific WLAN network.
+     *
+     * @param wlanIfc The WLAN interface identifier.
+     * @param wlanAp The access point identifier.
+     * @return [Enabled] containing the enabled status of the network.
+     */
+    suspend fun getWlanScheduleEnabled(wlanIfc: String,
+                                       wlanAp: String) = liveboxApi.getWlanScheduleEnabled(
+        uri = capabilities.featuresMap[WLAN_SCHEDULE_ENABLE]!!.uri
+            .addParams(mapOf(
+                URI_WLAN_IFC to wlanIfc,
+                URI_WLAN_AP to wlanAp))
+    )
+
+    /**
+     * Updates the enabled schedules status for a specific WLAN network.
+     *
+     * @param wlanIfc The WLAN interface identifier.
+     * @param wlanAp The access point identifier.
+     * @param enabled [Enabled] containing the new enabled status for the network.
+     * @return [Enabled] containing the enabled status of the network.
+     */
+    suspend fun putWlanScheduleEnabled(wlanIfc: String,
+                                       wlanAp: String,
+                                       enabled: Enabled) = liveboxApi.putWlanScheduleEnabled(
+        uri = capabilities.featuresMap[WLAN_SCHEDULE_ENABLE]!!.uri
+            .addParams(mapOf(
+                URI_WLAN_IFC to wlanIfc,
+                URI_WLAN_AP to wlanAp)),
+        enabled = enabled
     )
 }
