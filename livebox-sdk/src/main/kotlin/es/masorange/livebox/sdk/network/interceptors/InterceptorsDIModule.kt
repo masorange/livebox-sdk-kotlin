@@ -5,6 +5,7 @@ import es.masorange.livebox.sdk.network.Environment
 import es.masorange.livebox.sdk.network.interceptors.models.TypedInterceptor
 import es.masorange.livebox.sdk.network.interceptors.models.TypedInterceptorContextType
 import org.kodein.di.*
+import java.net.URL
 
 private const val LIVEBOX_SDK_HEADERS_INTERCEPTOR_PRIORITY = 1
 
@@ -16,14 +17,18 @@ const val INTERCEPTOR_LIVEBOX_SDK_AUTH_HEADER_APP = "livebox_sdk_auth_header_app
 object InterceptorsDIModule : BaseDIModule() {
     override val builder: DI.Builder.() -> Unit = {
         bind<TypedInterceptor>(INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_TEST) with singleton {
-            val liveboxSdkHeadersInterceptor = LiveboxSdkHeadersInterceptor(host = Environment.TEST.baseUrl)
+            val liveboxSdkHeadersInterceptor = LiveboxSdkHeadersInterceptor(
+                host = URL(Environment.TEST.baseUrl).host
+            )
             TypedInterceptor(
                 TypedInterceptorContextType.APPLICATION,
                 liveboxSdkHeadersInterceptor,
                 LIVEBOX_SDK_HEADERS_INTERCEPTOR_PRIORITY)
         }
         bind<TypedInterceptor>(INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_LIVE) with singleton {
-            val liveboxSdkHeadersInterceptor = LiveboxSdkHeadersInterceptor(host = Environment.LIVE.baseUrl)
+            val liveboxSdkHeadersInterceptor = LiveboxSdkHeadersInterceptor(
+                host = URL(Environment.LIVE.baseUrl).host
+            )
             TypedInterceptor(
                 TypedInterceptorContextType.APPLICATION,
                 liveboxSdkHeadersInterceptor,
