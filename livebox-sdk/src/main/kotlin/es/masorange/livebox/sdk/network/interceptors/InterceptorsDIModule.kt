@@ -5,9 +5,9 @@ import es.masorange.livebox.sdk.network.Environment
 import es.masorange.livebox.sdk.network.interceptors.models.TypedInterceptor
 import es.masorange.livebox.sdk.network.interceptors.models.TypedInterceptorContextType
 import org.kodein.di.*
+import java.net.URL
 
 private const val LIVEBOX_SDK_HEADERS_INTERCEPTOR_PRIORITY = 1
-private const val LIVEBOX_SDK_HOST_HEADER_PREFIX = "http://"
 
 const val INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_TEST = "livebox_sdk_headers_app_test"
 const val INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_LIVE = "livebox_sdk_headers_app_live"
@@ -18,7 +18,7 @@ object InterceptorsDIModule : BaseDIModule() {
     override val builder: DI.Builder.() -> Unit = {
         bind<TypedInterceptor>(INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_TEST) with singleton {
             val liveboxSdkHeadersInterceptor = LiveboxSdkHeadersInterceptor(
-                host = Environment.TEST.baseUrl.removePrefix(LIVEBOX_SDK_HOST_HEADER_PREFIX)
+                host = URL(Environment.TEST.baseUrl).host
             )
             TypedInterceptor(
                 TypedInterceptorContextType.APPLICATION,
@@ -27,7 +27,7 @@ object InterceptorsDIModule : BaseDIModule() {
         }
         bind<TypedInterceptor>(INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_LIVE) with singleton {
             val liveboxSdkHeadersInterceptor = LiveboxSdkHeadersInterceptor(
-                host = Environment.LIVE.baseUrl.removePrefix(LIVEBOX_SDK_HOST_HEADER_PREFIX)
+                host = URL(Environment.LIVE.baseUrl).host
             )
             TypedInterceptor(
                 TypedInterceptorContextType.APPLICATION,
