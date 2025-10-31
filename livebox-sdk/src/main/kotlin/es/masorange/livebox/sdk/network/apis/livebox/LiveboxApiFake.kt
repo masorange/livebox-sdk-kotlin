@@ -2,18 +2,19 @@ package es.masorange.livebox.sdk.network.apis.livebox
 
 import es.masorange.livebox.sdk.business.WeekDay
 import es.masorange.livebox.sdk.business.WeekDayHour
-import es.masorange.livebox.sdk.business.toDeviceSchedule
+import es.masorange.livebox.sdk.business.toSchedule
 import es.masorange.livebox.sdk.domain.livebox.models.BlockedDevice
 import es.masorange.livebox.sdk.domain.livebox.models.BlockedDeviceAddRule
 import es.masorange.livebox.sdk.domain.livebox.models.BlockedDeviceUpdateRule
 import es.masorange.livebox.sdk.domain.livebox.models.Capabilities
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceDetail
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceInfo
-import es.masorange.livebox.sdk.domain.livebox.models.DeviceSchedule
+import es.masorange.livebox.sdk.domain.livebox.models.Schedule
 import es.masorange.livebox.sdk.domain.livebox.models.GeneralInfo
 import es.masorange.livebox.sdk.domain.livebox.models.Wifi
 import es.masorange.livebox.sdk.domain.livebox.models.AccessPoint
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceAlias
+import es.masorange.livebox.sdk.domain.livebox.models.Enabled
 import es.masorange.livebox.sdk.domain.livebox.models.Feature
 import es.masorange.livebox.sdk.domain.livebox.models.Feature.Id.CONNECTED_DEVICES
 import es.masorange.livebox.sdk.domain.livebox.models.Feature.Id.CONNECTED_DEVICES_MAC
@@ -32,18 +33,19 @@ import es.masorange.livebox.sdk.domain.livebox.models.WlanInterface
 import es.masorange.livebox.sdk.utils.withDegradedServer
 
 class LiveboxApiFake : LiveboxApi {
+    private val schedule = listOf(
+        WeekDayHour(WeekDay.MONDAY, 1).toSchedule(),
+        WeekDayHour(WeekDay.TUESDAY, 1).toSchedule(),
+        WeekDayHour(WeekDay.WEDNESDAY, 1).toSchedule(),
+        WeekDayHour(WeekDay.THURSDAY, 1).toSchedule(),
+        WeekDayHour(WeekDay.FRIDAY, 1).toSchedule()
+    )
     private val blockedDevice = BlockedDevice(
         mac = "11:22:33:44:55:66",
         mode = BlockedDevice.Mode.SCHEDULE,
         name = "iFlary 16",
         status = BlockedDevice.Status.ENABLED,
-        schedule = listOf(
-            WeekDayHour(WeekDay.MONDAY, 1).toDeviceSchedule()!!,
-            WeekDayHour(WeekDay.TUESDAY, 1).toDeviceSchedule()!!,
-            WeekDayHour(WeekDay.WEDNESDAY, 1).toDeviceSchedule()!!,
-            WeekDayHour(WeekDay.THURSDAY, 1).toDeviceSchedule()!!,
-            WeekDayHour(WeekDay.FRIDAY, 1).toDeviceSchedule()!!
-        )
+        schedule = schedule
     )
 
     override suspend fun getCapabilities() = withDegradedServer {
@@ -227,7 +229,27 @@ class LiveboxApiFake : LiveboxApi {
         blockedDevice.schedule!!
     }
 
-    override suspend fun postDevicesMacSchedules(uri: String, deviceScheduleList: List<DeviceSchedule>): List<DeviceSchedule> {
-        return deviceScheduleList
+    override suspend fun postDevicesMacSchedules(uri: String, scheduleList: List<Schedule>) = withDegradedServer {
+        scheduleList
+    }
+
+    override suspend fun getWlanSchedule(uri: String) = withDegradedServer {
+        schedule
+    }
+
+    override suspend fun postWlanSchedule(uri: String, scheduleList: List<Schedule>) = withDegradedServer {
+        scheduleList
+    }
+
+    override suspend fun deleteWlanSchedule(uri: String, scheduleList: List<Schedule>) = withDegradedServer {
+        emptyList<Schedule>()
+    }
+
+    override suspend fun getWlanScheduleEnabled(uri: String) = withDegradedServer {
+        Enabled(enabled = false)
+    }
+
+    override suspend fun putWlanScheduleEnabled(uri: String, enabled: Enabled) = withDegradedServer {
+        enabled
     }
 }

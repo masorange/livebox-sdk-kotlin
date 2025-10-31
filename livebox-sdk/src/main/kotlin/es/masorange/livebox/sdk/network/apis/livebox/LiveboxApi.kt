@@ -6,14 +6,16 @@ import es.masorange.livebox.sdk.domain.livebox.models.BlockedDeviceUpdateRule
 import es.masorange.livebox.sdk.domain.livebox.models.Capabilities
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceDetail
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceInfo
-import es.masorange.livebox.sdk.domain.livebox.models.DeviceSchedule
+import es.masorange.livebox.sdk.domain.livebox.models.Schedule
 import es.masorange.livebox.sdk.domain.livebox.models.GeneralInfo
 import es.masorange.livebox.sdk.domain.livebox.models.Wifi
 import es.masorange.livebox.sdk.domain.livebox.models.AccessPoint
 import es.masorange.livebox.sdk.domain.livebox.models.DeviceAlias
+import es.masorange.livebox.sdk.domain.livebox.models.Enabled
 import es.masorange.livebox.sdk.domain.livebox.models.WlanInterface
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.PUT
 
@@ -88,11 +90,39 @@ interface LiveboxApi {
     @GET
     suspend fun getDevicesMacSchedules(
         @retrofit2.http.Url uri: String
-    ): List<DeviceSchedule>
+    ): List<Schedule>
 
     @POST
     suspend fun postDevicesMacSchedules(
         @retrofit2.http.Url uri: String,
-        @Body deviceScheduleList: List<DeviceSchedule>
-    ): List<DeviceSchedule>
+        @Body scheduleList: List<Schedule>
+    ): List<Schedule>
+
+    @GET
+    suspend fun getWlanSchedule(
+        @retrofit2.http.Url uri: String
+    ): List<Schedule>
+
+    @POST
+    suspend fun postWlanSchedule(
+        @retrofit2.http.Url uri: String,
+        @Body scheduleList: List<Schedule>
+    ): List<Schedule>
+
+    @HTTP(method = "DELETE", hasBody = true)
+    suspend fun deleteWlanSchedule(
+        @retrofit2.http.Url uri: String,
+        @Body scheduleList: List<Schedule>
+    ): List<Schedule>
+
+    @GET
+    suspend fun getWlanScheduleEnabled(
+        @retrofit2.http.Url uri: String
+    ): Enabled
+
+    @PUT
+    suspend fun putWlanScheduleEnabled(
+        @retrofit2.http.Url uri: String,
+        @Body enabled: Enabled
+    ): Enabled
 }
