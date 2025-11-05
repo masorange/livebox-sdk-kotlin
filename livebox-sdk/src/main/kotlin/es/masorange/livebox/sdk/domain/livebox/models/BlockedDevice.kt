@@ -11,7 +11,7 @@ data class BlockedDevice(
     @Json(name = "Status") val status: Status,
     @Json(name = "Services") val services: List<BlockedDeviceService>? = null,
     @Json(name = "Urls") val urls: List<BlockedDeviceUrl>? = null,
-    @Json(name = "Schedule") val schedule: List<DeviceSchedule>? = null
+    @Json(name = "Schedule") val schedule: List<Schedule>? = null
 ) {
     enum class Mode(val value: String) {
         @Json(name = "Allow") ALLOW("Allow"),
