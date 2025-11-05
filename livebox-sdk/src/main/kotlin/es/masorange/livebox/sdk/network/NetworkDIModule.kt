@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
 
 @Suppress("UndocumentedPublicClass")
 object NetworkDIModule : BaseDIModule() {
-    private const val OKHTTP_TIMEOUT_SECONDS = 10L
+    private const val OKHTTP_TIMEOUT_SECONDS = 60L
     private const val MAX_CACHE_SIZE_BYTES = 100L * 1024 * 1024 // 100MB
 
     internal const val RETROFIT_TEST_TAG = "test"
