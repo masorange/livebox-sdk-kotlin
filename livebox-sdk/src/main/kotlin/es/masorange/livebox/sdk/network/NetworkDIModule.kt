@@ -9,6 +9,7 @@ import es.masorange.livebox.sdk.network.adapters.AccessPointBandwidthConfAdapter
 import es.masorange.livebox.sdk.network.adapters.FeatureIdAdapter
 import es.masorange.livebox.sdk.network.adapters.MoshiBigDecimalAdapter
 import es.masorange.livebox.sdk.network.adapters.ShortAccessPointAdapter
+import es.masorange.livebox.sdk.network.adapters.WifiStatusButtonAdapter
 import es.masorange.livebox.sdk.network.interceptors.INTERCEPTOR_LIVEBOX_SDK_AUTH_HEADER_APP
 import es.masorange.livebox.sdk.network.interceptors.models.TypedInterceptor
 import es.masorange.livebox.sdk.network.interceptors.INTERCEPTOR_LIVEBOX_SDK_HEADERS_APP_LIVE
@@ -78,6 +79,7 @@ object NetworkDIModule : BaseDIModule() {
                 .add(KotlinJsonAdapterFactory())
                 .add(FeatureIdAdapter())
                 .add(AccessPointBandwidthConfAdapter())
+                .add(WifiStatusButtonAdapter())
                 .add(BigDecimal::class.java, MoshiBigDecimalAdapter())
                 .build()
         }

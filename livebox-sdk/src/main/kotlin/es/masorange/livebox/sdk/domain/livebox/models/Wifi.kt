@@ -1,10 +1,11 @@
 package es.masorange.livebox.sdk.domain.livebox.models
 
 import com.squareup.moshi.Json
+import es.masorange.livebox.sdk.network.adapters.FlexibleBoolean
 
 data class Wifi(
     @Json(name = "Id") val id: String? = null,
-    @Json(name = "WiFiStatusButton") val wifiStatusButton: Boolean? = null,
+    @FlexibleBoolean @Json(name = "WiFiStatusButton") val wifiStatusButton: Boolean? = null,
     @Json(name = "Status") val status: Status? = null,
     @Json(name = "Frequency") val frequency: Frequency? = null
 ) {
