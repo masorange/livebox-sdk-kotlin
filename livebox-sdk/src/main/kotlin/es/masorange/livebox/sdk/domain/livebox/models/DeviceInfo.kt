@@ -14,13 +14,13 @@ import com.squareup.moshi.Json
  * @param ipV6Address The IPv6 address of the device, if available.
  */
 data class DeviceInfo(
-    @Json(name = "ipAddress") val ipAddress: String,
+    @Json(name = "ipAddress") val ipAddress: String?,
     @Json(name = "physAddress") val physAddress: String,
     @Json(name = "hostName") val hostName: String,
     @Json(name = "interfaceType") val interfaceType: InterfaceType,
     @Json(name = "active") val active: Boolean,
     @Json(name = "alias") val alias: String,
-    @Json(name = "ipV6Address") val ipV6Address: String
+    @Json(name = "ipV6Address") val ipV6Address: String?
 ) {
     enum class InterfaceType(val value: String) {
         @Json(name = "Ethernet") ETHERNET("Ethernet"),
