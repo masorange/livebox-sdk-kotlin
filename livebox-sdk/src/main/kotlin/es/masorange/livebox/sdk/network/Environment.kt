@@ -40,7 +40,7 @@ enum class Environment {
             val linkProperties = connectivityManager.getLinkProperties(activeNetwork) ?: return defaultGateway
 
             val gateway = linkProperties.routes
-                .firstOrNull { it.isDefaultRoute }
+                .firstOrNull { it.isDefaultRoute && it.gateway is java.net.Inet4Address }
                 ?.gateway?.hostAddress
 
             Timber.d("Gateway IP: $gateway")
