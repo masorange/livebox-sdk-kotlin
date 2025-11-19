@@ -190,7 +190,7 @@ class LiveboxApiFake : LiveboxApi {
         AccessPoint(
             bssid = "00:11:22:33:44:55",
             ssid = "Vapybox-3000-WiFi",
-            type = "Home",
+            type = AccessPoint.Type.HOME,
             manner = AccessPoint.Manner.COMBINED,
             status = AccessPoint.Status.UP,
             password = "password123",
