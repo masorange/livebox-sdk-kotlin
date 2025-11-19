@@ -6,7 +6,9 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import es.masorange.livebox.sdk.di.BaseDIModule
 import es.masorange.livebox.sdk.network.adapters.AccessPointBandwidthConfAdapter
+import es.masorange.livebox.sdk.network.adapters.AccessPointTypeAdapter
 import es.masorange.livebox.sdk.network.adapters.FeatureIdAdapter
+import es.masorange.livebox.sdk.network.adapters.GeneralInfoAdapterFactory
 import es.masorange.livebox.sdk.network.adapters.MoshiBigDecimalAdapter
 import es.masorange.livebox.sdk.network.adapters.ShortAccessPointAdapter
 import es.masorange.livebox.sdk.network.adapters.WifiStatusButtonAdapter
@@ -76,8 +78,10 @@ object NetworkDIModule : BaseDIModule() {
         bind<Moshi>() with singleton {
             Moshi.Builder()
                 .add(ShortAccessPointAdapter())
+                .add(GeneralInfoAdapterFactory())
                 .add(KotlinJsonAdapterFactory())
                 .add(FeatureIdAdapter())
+                .add(AccessPointTypeAdapter())
                 .add(AccessPointBandwidthConfAdapter())
                 .add(WifiStatusButtonAdapter())
                 .add(BigDecimal::class.java, MoshiBigDecimalAdapter())

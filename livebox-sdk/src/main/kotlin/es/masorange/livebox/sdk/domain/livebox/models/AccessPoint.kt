@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 data class AccessPoint(
     @Json(name = "idx") val idx: String? = null,
     @Json(name = "BSSID") val bssid: String,
-    @Json(name = "Type") val type: String,
+    @Json(name = "Type") val type: Type,
     @Json(name = "Manner") val manner: Manner,
     @Json(name = "Status") val status: Status,
     @Json(name = "SSID") val ssid: String,
@@ -25,6 +25,17 @@ data class AccessPoint(
     @Json(name = "Mode") val mode: String? = null,
     @Json(name = "SchedulingAllowed") val schedulingAllowed: Boolean
 ) {
+    enum class Type(val value: String) {
+        @Json(name = "Home") HOME("Home"),
+        @Json(name = "Guest") GUEST("Guest"),
+        UNKNOWN("Unknown");
+
+        companion object {
+            fun fromValue(value: String?): Type =
+                entries.find { it.value == value } ?: UNKNOWN
+        }
+    }
+
     enum class Manner(val value: String) {
         @Json(name = "Combined") COMBINED("Combined"),
         @Json(name = "Split") SPLIT("Split")
