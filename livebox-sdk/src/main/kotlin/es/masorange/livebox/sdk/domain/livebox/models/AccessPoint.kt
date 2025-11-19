@@ -27,7 +27,13 @@ data class AccessPoint(
 ) {
     enum class Type(val value: String) {
         @Json(name = "Home") HOME("Home"),
-        @Json(name = "Guest") GUEST("Guest")
+        @Json(name = "Guest") GUEST("Guest"),
+        UNKNOWN("Unknown");
+
+        companion object {
+            fun fromValue(value: String?): Type =
+                entries.find { it.value == value } ?: UNKNOWN
+        }
     }
 
     enum class Manner(val value: String) {
