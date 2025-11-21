@@ -7,6 +7,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import es.masorange.livebox.sdk.di.BaseDIModule
 import es.masorange.livebox.sdk.network.adapters.AccessPointBandwidthConfAdapter
 import es.masorange.livebox.sdk.network.adapters.AccessPointTypeAdapter
+import es.masorange.livebox.sdk.network.adapters.DeviceInfoListAdapterFactory
 import es.masorange.livebox.sdk.network.adapters.FeatureIdAdapter
 import es.masorange.livebox.sdk.network.adapters.GeneralInfoAdapterFactory
 import es.masorange.livebox.sdk.network.adapters.MoshiBigDecimalAdapter
@@ -79,6 +80,7 @@ object NetworkDIModule : BaseDIModule() {
             Moshi.Builder()
                 .add(ShortAccessPointAdapter())
                 .add(GeneralInfoAdapterFactory())
+                .add(DeviceInfoListAdapterFactory())
                 .add(KotlinJsonAdapterFactory())
                 .add(FeatureIdAdapter())
                 .add(AccessPointTypeAdapter())
