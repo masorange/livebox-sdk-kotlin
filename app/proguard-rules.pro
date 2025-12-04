@@ -1,21 +1,16 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+  # Livebox SDK ProGuard Rules
+  # Keep all SDK classes to prevent obfuscation issues with Moshi/Retrofit
+  -keep class es.masorange.livebox.sdk.** { *; }
+  -keepclassmembers class es.masorange.livebox.sdk.** { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+  # Keep Moshi annotations
+  -keepclassmembers class es.masorange.livebox.sdk.** {
+      @com.squareup.moshi.* <fields>;
+  }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+  # Keep generated JsonAdapters
+  -if class es.masorange.livebox.sdk.**
+  -keep class <1>JsonAdapter {
+      <init>(...);
+      <fields>;
+  }
