@@ -68,6 +68,7 @@ data class DeviceDetail(
         @Json(name = "Ethernet") ETHERNET("Ethernet"),
         @Json(name = "Wifi") WIFI("Wifi"),
         @Json(name = "Wifi24") WIFI24("Wifi24"),
-        @Json(name = "Wifi50") WIFI50("Wifi50")
+        @Json(name = "Wifi50") WIFI50("Wifi50"),
+        @Json(name = "Wifi60") WIFI60("Wifi60")
     }
 }
