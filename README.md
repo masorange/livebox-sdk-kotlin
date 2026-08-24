@@ -17,8 +17,16 @@ val liveboxSdk = LiveboxSdkBuilder()
 - `context`: `Context` — The current context where the initialization is set.
 - `environment`: `Environment` — Defines whether to use the test or live API environment (`Environment.TEST` or `Environment.LIVE`).
 
-### Clear traffic permission
-For setting-up the module on an Android project, clear traffic should be permited for the app, as Livebox routers do comunicate through non-secure `http`. For doing this, the `cleartextTrafficPermitted` flag must be set to `true`, which can be done on an `network-security-config.xml` as follows:
+### Network Configuration (Required for Android 17+)
+
+**IMPORTANT for Android 17 (API 37) and higher:**
+
+Android 17 introduces the `ACCESS_LOCAL_NETWORK` runtime permission to protect access to devices on the local network (including routers). The SDK declares this permission in its manifest (automatically merged), but **your app must request it at runtime**.
+
+#### 1. Add Network Security Configuration
+
+Create `res/xml/network_security_config.xml` in your app:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
@@ -26,7 +34,9 @@ For setting-up the module on an Android project, clear traffic should be permite
         cleartextTrafficPermitted="true" />
 </network-security-config>
 ```
+
 Then this would be referenced in the `application` level in the `AndroidManifest.xml`:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest>
@@ -37,6 +47,43 @@ Then this would be referenced in the `application` level in the `AndroidManifest
     </application>
 </manifest>
 ```
+
+**Note:** Livebox routers use HTTP (not HTTPS) and have dynamic IP addresses obtained via gateway detection, so we need to allow cleartext traffic globally for local network access.
+
+#### 2. Request Runtime Permission (Android 17+)
+
+```kotlin
+import android.Manifest
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+
+class MainActivity : ComponentActivity() {
+    
+    private val localNetworkPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            // Initialize SDK
+            initializeLiveboxSdk()
+        } else {
+            // Handle permission denied
+        }
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // Request permission on Android 17+ (API 37)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
+            localNetworkPermission.launch(Manifest.permission.ACCESS_LOCAL_NETWORK)
+        } else {
+            initializeLiveboxSdk()
+        }
+    }
+}
+```
+
+**See the sample app in this repository for a complete example.**
 
 ## Authentication
 ```kotlin
