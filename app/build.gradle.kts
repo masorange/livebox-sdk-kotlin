@@ -1,19 +1,18 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "es.masorange.livebox.sdk"
+    namespace = "es.masorange.livebox.sdk.app"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "es.masorange.livebox.sdk"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 10
-        versionName = "1.2.0"
+        versionCode = 11
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -30,9 +29,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.toVersion(libs.versions.java.sdk.get())
         targetCompatibility = JavaVersion.toVersion(libs.versions.java.sdk.get())
-    }
-    kotlinOptions {
-        jvmTarget = libs.versions.java.sdk.get()
     }
     buildFeatures {
         compose = true
