@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("maven-publish")
 }
 
 android {
@@ -34,6 +35,25 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = "com.github.masorange"
+            artifactId = "livebox-sdk-kotlin"
+
+            afterEvaluate {
+                from(components["release"])
+            }
+        }
     }
 }
 
