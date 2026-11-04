@@ -10,9 +10,13 @@ import timber.log.Timber
  * Available environments for the Router.
  */
 enum class Environment {
+    /** Fake responses for testing, served by a local mock server at `http://localhost:3001` (e.g., Mockoon). */
     TEST,
+
+    /** The real router, reached through the default gateway of the current Wi-Fi network (`http://192.168.1.1` if it can't be detected). */
     LIVE;
 
+    /** The base URL of the router API for this environment. */
     val baseUrl: String
         get() = when (this) {
             TEST -> testBaseUrl
@@ -23,6 +27,11 @@ enum class Environment {
         private var testBaseUrl: String = "http://localhost:3001" // This points at your Mockoon
         private var liveBaseUrl: String = "http://192.168.1.1"
 
+        /**
+         * Sets the [LIVE] base URL to the default gateway of the current network. Called by [es.masorange.livebox.sdk.LiveboxSdkBuilder.build].
+         *
+         * @throws NoWifiException If the device is not connected to a Wi-Fi network.
+         */
         fun setupGateway(context: Context) {
             liveBaseUrl = "http://${getGatewayIp(context)}"
         }

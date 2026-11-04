@@ -8,18 +8,21 @@ import com.squareup.moshi.Json
  * @param id The feature's ID.
  * @param uri The URI to which the feature is mapped in the router.
  * @param ops The feature's available operations:
- *      "R" :: [READ]: Can be read.
- *      "W" :: [WRITE]: Can be modified.
- *      "I" :: [INVOKE]: Can be invoked as action.
- *      "A" :: [ADD]: New child resources can be added.
- *      "D" :: [DELETE]: Can be deleted.
- *      "Q" :: [QUERY]: Description can be queried for reading.
+ *      "R" :: [Ops.READ]: Can be read.
+ *      "W" :: [Ops.WRITE]: Can be modified.
+ *      "I" :: [Ops.INVOKE]: Can be invoked as action.
+ *      "A" :: [Ops.ADD]: New child resources can be added.
+ *      "D" :: [Ops.DELETE]: Can be deleted.
+ *      "Q" :: [Ops.QUERY]: Description can be queried for reading.
  */
 data class Feature(
     @Json(name = "Id") val id: Id,
     @Json(name = "Uri") val uri: String,
     @Json(name = "Ops") val ops: List<Ops>
 ) {
+    /**
+     * The identifier of a router feature. The SDK only uses some of them; see [LiveboxSdk][es.masorange.livebox.sdk.LiveboxSdk].
+     */
     enum class Id(value: String) {
         @Json(name = "Capabilities") CAPABILITIES("Capabilities"),
         @Json(name = "Access") ACCESS("Access"),
@@ -145,6 +148,7 @@ data class Feature(
         }
     }
 
+    /** An operation allowed on a feature. */
     enum class Ops(val value: String) {
         @Json(name = "R") READ("R"),
         @Json(name = "W") WRITE("W"),

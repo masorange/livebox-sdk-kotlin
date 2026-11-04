@@ -45,6 +45,17 @@ android {
     }
 }
 
+dokka {
+    dokkaSourceSets.configureEach {
+        includes.from("Module.md")
+        // Hide implementation details that are public only for technical reasons
+        perPackageOption {
+            matchingRegex.set("""es\.masorange\.livebox\.sdk\.(di|utils|domain\.livebox|network\..+)""")
+            suppress.set(true)
+        }
+    }
+}
+
 publishing {
     publications {
         register<MavenPublication>("release") {
