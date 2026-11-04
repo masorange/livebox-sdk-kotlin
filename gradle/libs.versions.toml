@@ -23,6 +23,7 @@ moshi = "1.15.2"
 moshi-sealed = "0.29.0"
 chucker = "4.1.0"
 retrofit = "2.11.0"
+dokka = "2.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +72,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 
 [bundles]
 kodein = ["kodein-jvm", "kodein-conf-jvm", "kodein-framework-androidx", "kodein-framework-compose"]

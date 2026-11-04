@@ -7,7 +7,7 @@ import com.squareup.moshi.Json
  *
  * @param physAddress The physical (MAC) address of the device.
  * @param ipAddress The IPv4 address of the device.
- * @param ipV6Address The IPv6 address of the device, if available.
+ * @param ipV6Address The IPv6 address of the device.
  * @param addressSource The source of the IP address (e.g., DHCP, Static), if available.
  * @param detectedTypes The types of connections detected for the device, if available.
  * @param leaseTimeRemaining The remaining lease time for the device's IP address, in seconds, if available.
@@ -21,9 +21,9 @@ import com.squareup.moshi.Json
  * @param lLtdDevice Indicates whether the device supports LLTD (Link Layer Topology Discovery), if available.
  * @param ssid The SSID of the network the device is connected to.
  * @param active Indicates whether the device is currently active on the network.
- * @param lastConnection Indicates whether the device was the last to connect to the network.
- * @param tags Indicates whether the device has associated tags.
- * @param layer2Interface Indicates whether the device is connected via a Layer 2 interface.
+ * @param lastConnection The last connection of the device, as reported by the router.
+ * @param tags The tags associated with the device, as reported by the router.
+ * @param layer2Interface The Layer 2 interface the device is connected through.
  * @param interfaceType The type of interface used by the device (e.g., Ethernet, Wi-Fi).
  * @param manufacturerOui The manufacturer OUI (Organizationally Unique Identifier) of the device, if available.
  * @param serialNumber The serial number of the device, if available.
@@ -64,6 +64,7 @@ data class DeviceDetail(
     @Json(name = "deviceSource") val deviceSource: String? = null,
     @Json(name = "deviceID") val deviceId: String? = null
 ) {
+    /** The interface a device is connected through. `Wifi24`, `Wifi50` and `Wifi60` are the 2.4, 5 and 6 GHz bands. */
     enum class InterfaceType(val value: String) {
         @Json(name = "Ethernet") ETHERNET("Ethernet"),
         @Json(name = "Wifi") WIFI("Wifi"),

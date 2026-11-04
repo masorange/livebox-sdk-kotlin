@@ -16,13 +16,17 @@ enum class WeekDay {
     SUNDAY;
 
     companion object {
+        /** Returns the [WeekDay] at [index], from 0 (MONDAY) to 6 (SUNDAY). */
         fun fromIndex(index: Int): WeekDay = entries[index]
     }
 }
 
 /**
- * Represents a specific hour of a specific day of the week.
- * The hour is represented in 24-hour format (0-23).
+ * Represents a specific hour of a specific day of the week, used to set and read schedules.
+ * The hour is represented in 24-hour format (0-23), and covers the slot from that hour to the next one.
+ *
+ * @param dayOfWeek The day of the week.
+ * @param hour The hour of the day the slot starts at, from 0 to 23.
  */
 data class WeekDayHour(
     val dayOfWeek: WeekDay,

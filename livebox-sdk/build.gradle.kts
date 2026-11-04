@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.dokka)
     id("maven-publish")
 }
 
@@ -40,6 +41,17 @@ android {
     publishing {
         singleVariant("release") {
             withSourcesJar()
+        }
+    }
+}
+
+dokka {
+    dokkaSourceSets.configureEach {
+        includes.from("Module.md")
+        // Hide implementation details that are public only for technical reasons
+        perPackageOption {
+            matchingRegex.set("""es\.masorange\.livebox\.sdk\.(di|utils|domain\.livebox|network\..+)""")
+            suppress.set(true)
         }
     }
 }

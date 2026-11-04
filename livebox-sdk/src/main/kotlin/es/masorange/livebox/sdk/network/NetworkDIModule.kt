@@ -29,6 +29,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.math.BigDecimal
 import java.util.concurrent.TimeUnit
 
+/** @suppress Internal dependency injection setup. */
 @Suppress("UndocumentedPublicClass")
 object NetworkDIModule : BaseDIModule() {
     private const val OKHTTP_TIMEOUT_SECONDS = 60L

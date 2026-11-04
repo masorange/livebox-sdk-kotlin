@@ -3,15 +3,17 @@ package es.masorange.livebox.sdk.domain.livebox.models
 import com.squareup.moshi.Json
 
 /**
- * The Features the router implements.
- * Note that the URIs may vary depending on the router model and firmware version.
+ * The features the router implements, as returned by the `API/Capabilities` endpoint.
  *
- * @param features The list of [Feature] objects which the router can do.
+ * The SDK uses them to build the URL of each request, as the URIs may vary depending on the router model and
+ * firmware version.
+ *
+ * @param features The list of [Feature] objects the router supports.
  */
-
 data class Capabilities(
     @Json(name = "Features") val features: List<Feature>
 ) {
+    /** The [features] indexed by their [Feature.Id]. */
     val featuresMap: Map<Feature.Id, Feature> by lazy {
         features.associateBy { it.id }
     }

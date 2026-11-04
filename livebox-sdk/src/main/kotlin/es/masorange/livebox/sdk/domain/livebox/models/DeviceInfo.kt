@@ -5,12 +5,14 @@ import com.squareup.moshi.Json
 /**
  * Represents the information of a device connected to the Livebox router.
  *
- * @param ipAddress The IP address of the device.
+ * Use [LiveboxSdk.getDeviceDetail][es.masorange.livebox.sdk.LiveboxSdk.getDeviceDetail] with [physAddress] to get all its details.
+ *
+ * @param ipAddress The IP address of the device, if available.
  * @param physAddress The physical (MAC) address of the device.
  * @param hostName The name of the device, which the user will see.
  * @param interfaceType The type of interface used by the device (e.g., Ethernet, Wi-Fi).
  * @param active Indicates whether the device is currently active.
- * @param alias An alias or name for the device, if available.
+ * @param alias The alias or user-defined name for the device.
  * @param ipV6Address The IPv6 address of the device, if available.
  */
 data class DeviceInfo(
@@ -22,6 +24,7 @@ data class DeviceInfo(
     @Json(name = "alias") val alias: String,
     @Json(name = "ipV6Address") val ipV6Address: String?
 ) {
+    /** The interface a device is connected through. `Wifi24`, `Wifi50` and `Wifi60` are the 2.4, 5 and 6 GHz bands. */
     enum class InterfaceType(val value: String) {
         @Json(name = "Ethernet") ETHERNET("Ethernet"),
         @Json(name = "Wifi") WIFI("Wifi"),

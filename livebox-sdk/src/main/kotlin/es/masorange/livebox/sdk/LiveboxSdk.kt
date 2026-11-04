@@ -28,8 +28,12 @@ import retrofit2.HttpException
  * SDK for interacting with the Livebox API.
  * Provides methods to manage devices, Wi-Fi settings, access points, and device schedules.
  *
- * @param context Context where the init is performed.
- * @param environment The environment to use (e.g., TEST or LIVE).
+ * Create it with [LiveboxSdkBuilder]. Every method maps to a router [feature][es.masorange.livebox.sdk.domain.livebox.models.Feature]
+ * whose URI is read from the router [Capabilities], so call [login] (or [getCapabilities]) before any other method,
+ * otherwise an [UninitializedPropertyAccessException] is thrown.
+ * Calling a method whose feature the router doesn't support throws a [NullPointerException].
+ *
+ * All methods are `suspend` and throw [HttpException] when the router responds with an HTTP error.
  */
 class LiveboxSdk internal constructor(
     private val context: Context,
@@ -62,10 +66,13 @@ class LiveboxSdk internal constructor(
     /**
      * Logs in to the Livebox API using the provided credentials.
      *
-     * @param username Optional username.
+     * The router API has no sessions: the credentials are stored and sent with every request using HTTP Basic
+     * Authentication. On success, the router [Capabilities] are fetched and cached.
+     *
+     * @param username Optional username. Defaults to `"UsrAdmin"`.
      * @param password The password for login to the Router's settings, AKA the password printed in the Router's label.
-     * @return True if login is successful, false otherwise.
-     * @throws HttpException If an HTTP error occurs.
+     * @return True if login is successful, false if the credentials are rejected (HTTP 401). In that case, the stored credentials are cleared.
+     * @throws HttpException If any other HTTP error occurs.
      */
     @Throws(HttpException::class)
     suspend fun login(username: String? = null,
@@ -88,7 +95,7 @@ class LiveboxSdk internal constructor(
     }
 
     /**
-     * Retrieves the Livebox API capabilities.
+     * Retrieves the Livebox API capabilities. They are fetched once and cached for the lifetime of this instance.
      *
      * @return The [Capabilities] object.
      */
@@ -104,7 +111,7 @@ class LiveboxSdk internal constructor(
     /**
      * Gets general information from the Livebox API.
      *
-     * @return General information.
+     * @return The [GeneralInfo][es.masorange.livebox.sdk.domain.livebox.models.GeneralInfo] of the router.
      */
     suspend fun getGeneralInfo() = liveboxApi.getGeneralInfo(
         uri = capabilities.featuresMap[GENERAL_INFO]!!.uri
@@ -113,7 +120,8 @@ class LiveboxSdk internal constructor(
     /**
      * Gets the list of connected devices.
      *
-     * @return List of connected devices.
+     * @return The [DeviceInfo][es.masorange.livebox.sdk.domain.livebox.models.DeviceInfo] list of devices known by the router.
+     * Malformed entries sent by some routers are skipped.
      */
     suspend fun getConnectedDevices() = liveboxApi.getConnectedDevices(
         uri = capabilities.featuresMap[CONNECTED_DEVICES]!!.uri
@@ -123,7 +131,7 @@ class LiveboxSdk internal constructor(
      * Gets detailed information about a specific device.
      *
      * @param mac The MAC address of the device.
-     * @return Device details.
+     * @return The [DeviceDetail][es.masorange.livebox.sdk.domain.livebox.models.DeviceDetail] of the device.
      */
     suspend fun getDeviceDetail(mac: String) = liveboxApi.getConnectedDevicesMac(
         uri = capabilities.featuresMap[CONNECTED_DEVICES_MAC]!!.uri
@@ -135,6 +143,7 @@ class LiveboxSdk internal constructor(
      *
      * @param mac The MAC address of the device.
      * @param alias The alias to set.
+     * @return The updated [DeviceDetail][es.masorange.livebox.sdk.domain.livebox.models.DeviceDetail] of the device.
      */
     suspend fun setDeviceAlias(mac: String,
                                alias: String) = liveboxApi.putConnectedDevicesMac(
@@ -146,7 +155,8 @@ class LiveboxSdk internal constructor(
     /**
      * Gets the list of Wi-Fi interfaces.
      *
-     * @return List of Wi-Fi interfaces.
+     * @return The list of Wi-Fi interfaces, mixed with an entry for the Wi-Fi status button.
+     * See [Wifi][es.masorange.livebox.sdk.domain.livebox.models.Wifi] to tell them apart.
      */
     suspend fun getWifiInterfaces() = liveboxApi.getWifi(
         uri = capabilities.featuresMap[WIFI]!!.uri
@@ -155,8 +165,8 @@ class LiveboxSdk internal constructor(
     /**
      * Gets information about a specific WLAN interface.
      *
-     * @param wlanIfc The WLAN interface identifier.
-     * @return WLAN interface details.
+     * @param wlanIfc The WLAN interface identifier (e.g., `"24GHz"`).
+     * @return The [WlanInterface][es.masorange.livebox.sdk.domain.livebox.models.WlanInterface] with its access points.
      */
     suspend fun getWlanInterface(wlanIfc: String) = liveboxApi.getWlanInterface(
         uri = capabilities.featuresMap[WLAN_INTERFACE]!!.uri
@@ -167,8 +177,8 @@ class LiveboxSdk internal constructor(
      * Gets information about a specific access point.
      *
      * @param wlanIfc The WLAN interface identifier.
-     * @param wlanAp The access point identifier.
-     * @return Access point details.
+     * @param wlanAp The access point identifier. See [WlanInterface.ShortAccessPoint.idx][es.masorange.livebox.sdk.domain.livebox.models.WlanInterface.ShortAccessPoint.idx].
+     * @return The [AccessPoint] configuration.
      */
     suspend fun getAccessPoint(wlanIfc: String,
                                wlanAp: String) = liveboxApi.getWlanAccessPoint(
@@ -180,10 +190,12 @@ class LiveboxSdk internal constructor(
 
     /**
      * Updates the configuration of a specific access point (e.g. Password changing).
+     * Get the current configuration with [getAccessPoint] and change it with [AccessPoint.copy].
      *
      * @param wlanIfc The WLAN interface identifier.
      * @param wlanAp The access point identifier.
      * @param accessPoint The new access point configuration.
+     * @return The updated [AccessPoint] configuration.
      */
     suspend fun updateAccessPoint(wlanIfc: String,
                                   wlanAp: String,
@@ -196,16 +208,16 @@ class LiveboxSdk internal constructor(
     )
 
     /**
-     * Gets the list of devices with blocking conditions.
+     * Gets the list of devices with parental control rules.
      *
-     * @return List of devices.
+     * @return The list of [BlockedDevice] entries.
      */
     suspend fun getBlockedDevices() = liveboxApi.getBlockedDevicesList(
         uri = capabilities.featuresMap[PC_DEVICES]!!.uri
     )
 
     /**
-     * Gets information about a specific device with blocking conditions.
+     * Gets the parental control rules of a specific device.
      *
      * @param mac The MAC address of the device.
      * @return Blocked device details.
@@ -216,10 +228,11 @@ class LiveboxSdk internal constructor(
     )
 
     /**
-     * Gets the schedules for a specific device.
+     * Gets the parental control schedules for a specific device.
      *
      * @param mac The MAC address of the device.
-     * @return List of schedules.
+     * @return The slots during which the device has no access to the network. Use
+     * [toWeekDayHour][es.masorange.livebox.sdk.business.toWeekDayHour] to convert them.
      */
     suspend fun getDeviceSchedules(mac: String) = liveboxApi.getDevicesMacSchedules(
         uri = capabilities.featuresMap[PC_DEVICES_MAC_SCHEDULES]!!.uri
@@ -227,10 +240,13 @@ class LiveboxSdk internal constructor(
     )
 
     /**
-     * Sets schedules for a specific device.
+     * Sets parental control schedules for a specific device.
+     *
+     * Adds the device to the parental control list if needed, switches its rule to
+     * [BlockedDevice.Mode.SCHEDULE] and posts the schedules.
      *
      * @param mac The MAC address of the device.
-     * @param schedules The list of schedules to set.
+     * @param schedules The hours during which the device has no access to the network.
      * @return The updated list of schedules.
      */
     suspend fun setDeviceSchedules(mac: String,
@@ -287,7 +303,7 @@ class LiveboxSdk internal constructor(
      *
      * @param wlanIfc The WLAN interface identifier.
      * @param wlanAp The access point identifier.
-     * @return The list of schedules for the network.
+     * @return The hours during which the network is off.
      */
     suspend fun getWlanSchedule(wlanIfc: String,
                                 wlanAp: String) = liveboxApi.getWlanSchedule(
