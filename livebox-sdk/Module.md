@@ -8,14 +8,18 @@ configure Wi-Fi and parental control schedules.
 Every operation is backed by a router *feature*. The router publishes the features it supports through its
 capabilities endpoint, so call `login` (which fetches them) before using any other method.
 
+First, initialize the SDK:
 ```kotlin
 val liveboxSdk = LiveboxSdkBuilder()
     .withContext(context)
     .withEnvironment(Environment.LIVE)
     .build()
-
+```
+Then login (fetching capabilities) and perform an operation, like getting router info:
+```kotlin
 lifecycleScope.launch {
-    if (liveboxSdk.login(password = "admin-password")) {
+    val loginSuccess = liveboxSdk.login(password = "admin-password")
+    if (loginSuccess) {
         val info = liveboxSdk.getGeneralInfo()
         Log.d("Livebox", "Router model: ${info.modelName}")
     }
@@ -23,6 +27,32 @@ lifecycleScope.launch {
 ```
 
 All methods are `suspend` functions and throw `retrofit2.HttpException` when the router responds with an HTTP error.
+
+## Router features
+
+Each method calls the following router features:
+
+| Method                   | Router features                                                              |
+|--------------------------|------------------------------------------------------------------------------|
+| `login`                  | `GET Capabilities`                                                           |
+| `getCapabilities`        | `GET Capabilities`                                                           |
+| `getGeneralInfo`         | `GET GeneralInfo`                                                            |
+| `getConnectedDevices`    | `GET ConnectedDevices`                                                       |
+| `getDeviceDetail`        | `GET ConnectedDevicesMac`                                                    |
+| `setDeviceAlias`         | `PUT ConnectedDevicesMac`                                                    |
+| `getWifiInterfaces`      | `GET Wifi`                                                                   |
+| `getWlanInterface`       | `GET WlanInterface`                                                          |
+| `getAccessPoint`         | `GET WlanAccessPoint`                                                        |
+| `updateAccessPoint`      | `PUT WlanAccessPoint`                                                        |
+| `getBlockedDevices`      | `GET PcDevices`                                                              |
+| `getBlockedDevice`       | `GET PcDevicesMac`                                                           |
+| `getDeviceSchedules`     | `GET PcDevicesMacSchedules`                                                  |
+| `setDeviceSchedules`     | `GET PcDevices`,<br/>`POST PcDevices`,<br/>`PUT PcDevicesMac`,<br/>`POST PcDevicesMacSchedules` |
+| `getWlanSchedule`        | `GET WlanSchedule`                                                           |
+| `postWlanSchedule`       | `POST WlanSchedule`                                                          |
+| `deleteWlanSchedule`     | `DELETE WlanSchedule`                                                        |
+| `getWlanScheduleEnabled` | `GET WlanScheduleEnable`                                                     |
+| `putWlanScheduleEnabled` | `PUT WlanScheduleEnable`                                                     |
 
 ## Network requirements
 
@@ -41,19 +71,9 @@ The router API has no sessions. Credentials are sent with every request using HT
 `login` stores and validates them, returning `false` and clearing them if the router rejects them.
 The username defaults to `"UsrAdmin"`.
 
-## Schedules
+## iOS
 
-Wi-Fi and parental control schedules are 1-hour slots of the week during which there is no access to the network.
-The SDK represents them as `WeekDayHour` values:
-
-```kotlin
-// No Wi-Fi on Mondays from 23:00 to 00:00
-liveboxSdk.postWlanSchedule(
-    wlanIfc = "24GHz",
-    wlanAp = accessPoint.idx,
-    scheduleList = listOf(WeekDayHour(WeekDay.MONDAY, 23))
-)
-```
+An equivalent SDK is available for iOS: [Livebox Swift SDK documentation](https://masorange.github.io/livebox-sdk-swift/documentation/).
 
 # Package es.masorange.livebox.sdk
 
