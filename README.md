@@ -1,8 +1,71 @@
 # Livebox Kotlin SDK
 
 The **Livebox Kotlin SDK** is a SDK designed to interact with the Livebox family of routers through their API, using Kotlin programming language. It allows authentication, connected devices management, Wi-Fi configuration, parental controls and more, and features automatic fetching of capabilities for compatibility with this family of routers.
-The schematics for the SDK are as follows:
-![](docs/assets/livebox-diagram.png)
+The schematics for the SDK are as follows, with each method linked to the router features it calls:
+```mermaid
+flowchart LR
+    app([App]) --> sdk
+
+    subgraph sdk [Livebox SDK]
+        login
+        getCapabilities
+        getGeneralInfo
+        getConnectedDevices
+        getDeviceDetail
+        setDeviceAlias
+        getWifiInterfaces
+        getWlanInterface
+        getAccessPoint
+        updateAccessPoint
+        getWlanSchedule
+        postWlanSchedule
+        deleteWlanSchedule
+        getWlanScheduleEnabled
+        putWlanScheduleEnabled
+        getBlockedDevices
+        getBlockedDevice
+        getDeviceSchedules
+        setDeviceSchedules
+    end
+
+    subgraph router [Livebox router]
+        Capabilities
+        GeneralInfo
+        ConnectedDevices
+        ConnectedDevicesMac
+        Wifi
+        WlanInterface
+        WlanAccessPoint
+        WlanSchedule
+        WlanScheduleEnable
+        PcDevices
+        PcDevicesMac
+        PcDevicesMacSchedules
+    end
+
+    login -- GET --> Capabilities
+    getCapabilities -- GET --> Capabilities
+    getGeneralInfo -- GET --> GeneralInfo
+    getConnectedDevices -- GET --> ConnectedDevices
+    getDeviceDetail -- GET --> ConnectedDevicesMac
+    setDeviceAlias -- PUT --> ConnectedDevicesMac
+    getWifiInterfaces -- GET --> Wifi
+    getWlanInterface -- GET --> WlanInterface
+    getAccessPoint -- GET --> WlanAccessPoint
+    updateAccessPoint -- PUT --> WlanAccessPoint
+    getWlanSchedule -- GET --> WlanSchedule
+    postWlanSchedule -- POST --> WlanSchedule
+    deleteWlanSchedule -- DELETE --> WlanSchedule
+    getWlanScheduleEnabled -- GET --> WlanScheduleEnable
+    putWlanScheduleEnabled -- PUT --> WlanScheduleEnable
+    getBlockedDevices -- GET --> PcDevices
+    getBlockedDevice -- GET --> PcDevicesMac
+    getDeviceSchedules -- GET --> PcDevicesMacSchedules
+    setDeviceSchedules -- GET --> PcDevices
+    setDeviceSchedules -- POST --> PcDevices
+    setDeviceSchedules -- PUT --> PcDevicesMac
+    setDeviceSchedules -- POST --> PcDevicesMacSchedules
+```
 
 ## Initialization
 Initialization of the SDK is performed through the `LiveboxSdkBuilder`, which returns the `LiveboxSdk` object to interact with the router. This `LiveboxSdk` object will be the one to use for all other following operations.
@@ -141,6 +204,33 @@ Retrieves configuration details for a specific access point.
 updateAccessPoint(wlanIfc: String, wlanAp: String, accessPoint: AccessPoint)
 ```
 Updates the configuration for a specific Wi-Fi access point. Used for changing the Wi-Fi's password.
+
+## Wi-Fi Schedules
+
+```kotlin
+getWlanSchedule(wlanIfc: String, wlanAp: String)
+```
+Returns the list of `WeekDayHour` during which the network is off.
+
+```kotlin
+postWlanSchedule(wlanIfc: String, wlanAp: String, scheduleList: List<WeekDayHour>)
+```
+Adds new schedules to the network. They are combined with the existing ones, and the complete resulting list is returned.
+
+```kotlin
+deleteWlanSchedule(wlanIfc: String, wlanAp: String, scheduleList: List<WeekDayHour>)
+```
+Deletes the given schedules from the network, and returns the resulting list.
+
+```kotlin
+getWlanScheduleEnabled(wlanIfc: String, wlanAp: String)
+```
+Returns an `Enabled` object indicating whether the schedules are active for the network.
+
+```kotlin
+putWlanScheduleEnabled(wlanIfc: String, wlanAp: String, enabled: Enabled)
+```
+Enables or disables the schedules for the network, and returns the updated `Enabled` status.
 
 ## Parental Controls (Blocked Devices)
 ```kotlin
